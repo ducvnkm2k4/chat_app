@@ -15,13 +15,13 @@ class User {
   });
 
   // Convert User object to Map
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({String? password}) {
     return {
-      'uid': uid,
       'userName': userName,
       'email': email,
       'avatar': avatar,
       'createAt': createAt.toIso8601String(),
+      'password': password
     };
   }
 

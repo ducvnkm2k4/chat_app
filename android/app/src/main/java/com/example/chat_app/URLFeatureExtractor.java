@@ -59,7 +59,7 @@ public class URLFeatureExtractor {
     public List<Double> extract(String rawUrl) throws Exception {
         rawUrl = rawUrl.replace("\"", "").replace("'", "");
         if (!rawUrl.startsWith("http")) rawUrl = "http://" + rawUrl;
-
+        final String url = rawUrl;
         URL urlObj = new URL(rawUrl);
         String host = urlObj.getHost();
         String path = urlObj.getPath();
@@ -85,7 +85,7 @@ public class URLFeatureExtractor {
 
         features.add((double) length);
         features.add((double) rawUrl.chars().filter(c -> SPECIAL_CHARS.indexOf(c) >= 0).count());
-        features.add(COMMON_KEYWORDS.stream().anyMatch(kw -> rawUrl.toLowerCase().contains(kw)) ? 1.0 : 0.0);
+        features.add(COMMON_KEYWORDS.stream().anyMatch(kw -> url.toLowerCase().contains(kw)) ? 1.0 : 0.0);
         features.add(round((double) HEX_PATTERN.matcher(rawUrl).results().mapToInt(m -> m.group().length()).sum() / length));
         features.add(round((double) rawUrl.chars().filter(Character::isDigit).count() / length));
         features.add((double) rawUrl.chars().filter(c -> c == '.').count());

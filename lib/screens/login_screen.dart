@@ -1,3 +1,5 @@
+import 'package:chat_app/service/user_services.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,12 +14,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _login() {
+  void _login() async {
     if (_formKey.currentState!.validate()) {
       // Email và mật khẩu mặc định
-      if (_emailController.text == 'admin@example.com' && 
-          _passwordController.text == '123456') {
-        Navigator.pushReplacementNamed(context, '/chat_list');
+      String email = _emailController.text;
+      String password = _passwordController.text;
+      String? uid = await UserServices.logInUser(email, password);
+      if (uid != null) {
+        Navigator.pushReplacementNamed(context, '/chat_detail');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -85,16 +89,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 ElevatedButton(
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.blue),
                   child: const Text('Đăng nhập'),
                 ),
                 const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    // TODO: Navigate to register screen
-                  },
-                  child: const Text('Chưa có tài khoản? Đăng ký'),
+                Center(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Chưa có tài khoản? ',
+                          style: TextStyle(
+                              color:
+                                  Colors.black), // Màu sắc cho phần văn bản này
+                        ),
+                        TextSpan(
+                          text: 'Đăng ký',
+                          style: TextStyle(
+                              color: Colors.blue), // Màu sắc cho phần 'Đăng ký'
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.pushNamed(context, '/sign_up');
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -110,4 +131,4 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.dispose();
     super.dispose();
   }
-} 
+}

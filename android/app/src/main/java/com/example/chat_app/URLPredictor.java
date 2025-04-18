@@ -1,9 +1,12 @@
+package com.example.chat_app;
+
 import ai.onnxruntime.*;
 import android.content.Context;
 import java.nio.FloatBuffer;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.HashMap;
 
 public class URLPredictor {
     private OrtEnvironment env;
