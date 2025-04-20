@@ -5,7 +5,8 @@ import 'dart:developer';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class MessageServices {
-  String backendUrl = 'http://192.168.161.167:8000/api';
+  String backendUrl =
+      'https://chat-app-backend1234-78677c67120d.herokuapp.com/api';
 
   Future<List<Map<String, dynamic>>> getMessages() async {
     try {

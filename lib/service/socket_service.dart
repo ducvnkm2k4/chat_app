@@ -14,10 +14,12 @@ class SocketService {
   }
 
   void initSocket() {
-    socket = IO.io('http://192.168.161.167:8000', <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': true,
-    });
+    socket = IO.io(
+        'https://chat-app-backend1234-78677c67120d.herokuapp.com',
+        <String, dynamic>{
+          'transports': ['websocket'],
+          'autoConnect': true,
+        });
 
     socket.onConnect((_) {
       log('🔌 Socket connected!');
