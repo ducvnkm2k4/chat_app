@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Message {
   String sender;
   DateTime createAt;
@@ -17,7 +15,7 @@ class Message {
       'sender': sender,
       'createAt': createAt.toIso8601String(),
       'message': message,
-      'state':state
+      'state': state
     };
   }
 
@@ -25,7 +23,7 @@ class Message {
     return Message(
       state: map['state'],
       sender: map['sender'],
-      createAt: (map['createAt'] as Timestamp).toDate(),
+      createAt: map['createAt'].toDate(),
       message: map['message'] ?? '',
     );
   }

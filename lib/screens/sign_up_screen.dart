@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:chat_app/service/user_services.dart';
+import 'package:chat_app/service/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/models/user.dart';
 
@@ -18,25 +18,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  bool _connectionState = false;
 
   void _onclickSignUp() async {
-    if (_formKey.currentState!.validate()) {
-      final newUser = User(
-        uid: '',
-        userName: _userNameController.text,
-        email: _emailController.text,
-        avatar: '',
-        createAt: DateTime.now(),
-      );
+    try {
+      setState(() {
+        _connectionState = true;
+      });
+      if (_formKey.currentState!.validate()) {
+        final newUser = User(
+          uid: '',
+          userName: _userNameController.text,
+          email: _emailController.text,
+          createAt: DateTime.now(),
+        );
 
-      String? uid =
-          await UserServices.signUpUser(newUser, _passwordController.text);
-
-      if (uid != null) {
-        log("Đăng ký thành công! UID: $uid");
-        // ignore: use_build_context_synchronously
-        Navigator.pushNamed(context, '/chat_detail');
+        String? uid =
+            await AuthServices().register(newUser, _passwordController.text);
+        if (uid != null) {
+          log("Đăng ký thành công! UID: $uid");
+          // ignore: use_build_context_synchronously
+          Navigator.pushNamed(context, '/chat_detail');
+        }
       }
+    } catch (e) {
+      log("Lỗi: $e");
+    } finally {
+      setState(() {
+        _connectionState = false;
+      });
     }
   }
 
@@ -122,7 +132,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ElevatedButton(
               onPressed: _onclickSignUp,
               style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-              child: const Text("Đăng Ký"),
+              child: _connectionState == false
+                  ? const Text("Đăng Ký")
+                  : const CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
             ),
           ],
         ),

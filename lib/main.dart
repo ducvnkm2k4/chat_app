@@ -1,22 +1,31 @@
 import 'package:chat_app/screens/sign_up_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:chat_app/service/message_provider.dart';
+import 'package:chat_app/service/socket_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/login_screen.dart';
 import 'screens/chat_detail_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-
   // Lấy SharedPreferences để kiểm tra trạng thái đăng nhập
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? uId = prefs.getString('uId');
-
+  SocketService();
   // Quyết định route ban đầu dựa trên việc có uid hay không
   String initialRoute = uId == null ? '/login' : '/chat_detail';
 
-  runApp(MyApp(initialRoute: initialRoute));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => MessageProvider()),
+      ],
+      child: MyApp(
+        initialRoute: initialRoute,
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

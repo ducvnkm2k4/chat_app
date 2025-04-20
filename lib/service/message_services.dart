@@ -1,33 +1,64 @@
-import 'package:chat_app/models/message.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:developer';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MessageServices {
-  final _db = FirebaseFirestore.instance.collection('chats');
+  String backendUrl = 'http://192.168.161.167:8000/api';
 
-  Future<List<Message>> getListMessage(String chatId) async {
-    final snapshot = await _db
-        .doc(chatId)
-        .collection('message')
-        .orderBy('createAt', descending: true)
-        .get();
+  Future<List<Map<String, dynamic>>> getMessages() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$backendUrl/messages'),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(const Duration(seconds: 10)); // Thêm timeout cho GET request
 
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-      return Message.fromMap(data);
-    }).toList();
+      final data = jsonDecode(response.body); // Giải mã JSON trước
+      if (response.statusCode == 200) {
+        return List<Map<String, dynamic>>.from(data['data']['messages']);
+      } else {
+        throw Exception('Failed to load messages');
+      }
+    } catch (e) {
+      log('Error: $e');
+      return [];
+    }
   }
 
-  Future<void> sendMessage(
-      String chatId, Message message, String sender) async {
-    await _db.doc(chatId).collection('message').add(message.toMap(sender));
-  }
+  Future<bool> sendMessage(String message, String userId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$backendUrl/messages'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'message': message,
+          'userid': userId,
+        }),
+      );
 
-  Stream<List<Map<String, dynamic>>?> streamMessages(String chatId) {
-    return _db
-        .doc(chatId)
-        .collection('message')
-        .orderBy('createAt', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        log('✅ Message sent: ${data['message']}');
+        log('⚠️ Phishing: ${data['is_phishing']}');
+        return true;
+      } else {
+        log('❌ Failed: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      log('Error: $e');
+      Fluttertoast.showToast(
+        msg: "❌ Gửi tin nhắn thất bại!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      return false;
+    }
   }
 }

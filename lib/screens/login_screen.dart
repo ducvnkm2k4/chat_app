@@ -1,4 +1,6 @@
-import 'package:chat_app/service/user_services.dart';
+import 'dart:developer';
+
+import 'package:chat_app/service/auth_services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -13,23 +15,41 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
+  bool _state = false;
   void _login() async {
-    if (_formKey.currentState!.validate()) {
-      // Email và mật khẩu mặc định
-      String email = _emailController.text;
-      String password = _passwordController.text;
-      String? uid = await UserServices.logInUser(email, password);
-      if (uid != null) {
-        Navigator.pushReplacementNamed(context, '/chat_detail');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Email hoặc mật khẩu không đúng'),
-            backgroundColor: Colors.red,
-          ),
-        );
+    try {
+      setState(() {
+        _state = true;
+      });
+      if (_formKey.currentState!.validate()) {
+        // Email và mật khẩu mặc định
+        String email = _emailController.text;
+        String password = _passwordController.text;
+        log('message: $email, $password');
+        String? uid = await AuthServices().signIn(email, password);
+        if (uid != null) {
+          Navigator.pushReplacementNamed(context, '/chat_detail');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Email hoặc mật khẩu không đúng'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
+    } catch (e) {
+      log('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Đã xảy ra lỗi. Vui lòng thử lại sau.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _state = false;
+      });
     }
   }
 
@@ -91,7 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: Colors.blue),
-                  child: const Text('Đăng nhập'),
+                  child: _state == false
+                      ? const Text('Đăng nhập')
+                      : const CircularProgressIndicator(),
                 ),
                 const SizedBox(height: 16),
                 Center(
