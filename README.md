@@ -23,7 +23,7 @@ Dự án này là một phần của nghiên cứu về khai phá dữ liệu v�
 - Lưu trữ cục bộ: SharedPreferences
 - Giao tiếp thời gian thực: WebSocket
 - Backend: https://github.com/ducvnkm2k4/chat-app-backend.git
-- Học Máy: https://github.com/ducvnkm2k4/btl_dmml_net.git
+- Máy học: https://github.com/ducvnkm2k4/predict-url-phishing.git
 - báo cáo nghiên cứu: https://docs.google.com/document/d/1omlw5fgTNDKg2MKwOU_6PcMlskKjncK8jpQO8l9orgg/edit?tab=t.0
 
 ## Cấu Trúc Dự Án
