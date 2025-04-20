@@ -1,16 +1,27 @@
-# chat_app
+# BTL khai phá dữ liệu và máy học trong an toàn hệ thống
 
-A new Flutter project.
+## Tổng Quan Dự Án
 
-## Getting Started
+Dự án này là một phần của nghiên cứu về khai phá dữ liệu và học máy trong an toàn hệ thống. Ứng dụng bao gồm:
 
-This project is a starting point for a Flutter application.
+- Ứng dụng di động phía client cho người dùng
+- Máy chủ backend với giao tiếp thời gian thực
+- Các thành phần học máy để tăng cường bảo mật
 
-A few resources to get you started if this is your first Flutter project:
+## Tính Năng
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Nhắn tin thời gian thực
+- Xác thực người dùng (Đăng nhập/Đăng ký)
+- Giao tiếp an toàn
+- Giao diện người dùng Material Design hiện đại
+- Lưu trữ trạng thái đăng nhập
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Công Nghệ Sử Dụng
+
+- Frontend: Flutter
+- Quản lý trạng thái: Provider
+- Lưu trữ cục bộ: SharedPreferences
+- Giao tiếp thời gian thực: WebSocket
+- Backend: https://github.com/ducvnkm2k4/chat-app-backend.git
+- Học Máy: https://github.com/ducvnkm2k4/btl_dmml_net.git
+- báo cáo nghiên cứu: https://docs.google.com/document/d/1omlw5fgTNDKg2MKwOU_6PcMlskKjncK8jpQO8l9orgg/edit?tab=t.0
