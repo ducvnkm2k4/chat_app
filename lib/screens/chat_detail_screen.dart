@@ -22,7 +22,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
   String? userId;
-
+  String? _username;
   late IO.Socket socket;
 
   @override
@@ -38,12 +38,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   void _initSocket() {
-    socket = IO.io(
-        'https://chat-app-backend1234-78677c67120d.herokuapp.com',
-        <String, dynamic>{
-          'transports': ['websocket'],
-          'autoConnect': true,
-        });
+    socket = IO.io('http://192.168.161.167:8000', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+    });
 
     socket.connect();
 
@@ -70,21 +68,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   void _onclickSendMessage() async {
     String message = _messageController.text.trim();
-    if (message.isEmpty || userId == null) return;
-
-    // Tạo tin nhắn tạm để hiển thị ngay
-    final newMessage = {
-      'user_id': userId,
-      'username': 'Bạn',
-      'content': message,
-      'is_phishing': false, // giả định ban đầu không phải phishing
-    };
-
-    // Thêm vào danh sách UI
-    Provider.of<MessageProvider>(context, listen: false).addMessage(newMessage);
 
     // Xoá nội dung input
     _messageController.clear();
+    // Thêm vào danh sách UI
+    log('list: ${Provider.of<MessageProvider>(context, listen: false).messages}');
 
     // Gửi tin nhắn đến backend
     bool success = await MessageServices().sendMessage(message, userId!);
@@ -144,7 +132,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         message['user_id'].toString() == userId.toString();
                     final senderName = message['username'] ?? 'Không rõ';
                     final isPhishing = message['is_phishing'] == true;
-                    log('isme: $isMe message_user_id: ${message['user_id']} userId: $userId');
+                    if (isMe && _username == null) {
+                      _username = message['username'];
+                    }
 
                     return Align(
                       alignment:
